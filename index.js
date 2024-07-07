@@ -4,13 +4,23 @@ const fs = require("fs");
 const util = require("util");
 
 // Method 2
-const lstat = util.promisify(fs.lstat);
+// const lstat = util.promisify(fs.lstat);
 
-fs.readdir(process.cwd(), (err, filenames) => {
+// Method 3
+const { lstat } = fs.promises;
+
+fs.readdir(process.cwd(), async (err, filenames) => {
   if (err) {
     throw new Error(err);
   }
-  console.log(filenames);
+  for (let filename of filenames) {
+    try {
+      const stats = await lstat(filename);
+      console.log(filename, stats.isFile());
+    } catch (err) {
+      console.log(err);
+    }
+  }
 });
 
 // Method 2
